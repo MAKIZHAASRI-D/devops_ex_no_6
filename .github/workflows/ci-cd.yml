@@ -1,0 +1,43 @@
+name: DevOps CI-CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-test-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Build Application
+        run: python -m py_compile app.py
+
+      - name: Run Tests
+        run: python -m pytest -v
+
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: devops-exp06-app:latest
+
+      - name: Pipeline Completed
+        run: echo "Build, Testing, and Docker Image Creation Completed Successfully"
