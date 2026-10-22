@@ -1,0 +1,1 @@
+# devops_ex_no_6
